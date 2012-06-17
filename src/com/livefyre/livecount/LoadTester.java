@@ -7,10 +7,9 @@ import static com.livefyre.livecount.Util.randomId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class LoadTester {
+public class LoadTester implements Runnable {
 	public static MetricAggregator metrics = new MetricAggregator();
 
 	private int nThreads = 8;
@@ -29,17 +28,36 @@ public class LoadTester {
 		hosts.add("http://genes-macbook-pro.local:8907");
 	}
 
-	public void start() throws InterruptedException {
-		p("Starting Load Tester { threads: %d, requests: %d }", nThreads, nRequests);
-		ScheduledExecutorService workers = Executors.newScheduledThreadPool(nThreads);
-		for (int i = 0; i < nRequests; i++) {
-			Client client = new Client(randomHost(hosts), randomId(3), randomId(100000));
-			workers.scheduleWithFixedDelay(client, 0, delay, TimeUnit.SECONDS);
-			Thread.sleep(delay * 1000 / nRequests);
-		}
-		workers.scheduleWithFixedDelay(new Runnable() {
+	public void run() {
+		Client[] clients = new Client[(int) Math.floor(nRequests / nThreads)];
 
-			@Override
+		for (int i = 0; i < clients.length; i++) {
+			clients[i] = new Client(randomHost(hosts), randomId(3), randomId(100000));
+		}
+		int i = 0;
+		while (true) {
+			clients[i].run();
+			i++;
+			if (i >= clients.length) {
+				i = 0;
+			}
+
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+			}
+		}
+
+	}
+
+	public void start() throws InterruptedException {
+		p("Starting Load Tester { threads: %d, requests: %d }", nThreads, (int) Math.floor(nRequests / nThreads)
+				* nThreads);
+
+		for (int i = 0; i < nThreads; i++) {
+			new Thread(this).start();
+		}
+		Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
 			public void run() {
 				p(metrics);
 			}
