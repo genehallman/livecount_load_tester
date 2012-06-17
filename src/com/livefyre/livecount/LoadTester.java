@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class LoadTester implements Runnable {
 	public static MetricAggregator metrics = new MetricAggregator();
 
-	private int nThreads = 8;
+	private int nThreads = 80;
 	private int nRequests = 8000;
 	private List<String> hosts;
 	private int delay = 5;
@@ -29,6 +29,7 @@ public class LoadTester implements Runnable {
 	}
 
 	public void run() {
+		p("Thread %s starting %d clients", Thread.currentThread().getName(), (int) Math.floor(nRequests / nThreads));
 		Client[] clients = new Client[(int) Math.floor(nRequests / nThreads)];
 
 		for (int i = 0; i < clients.length; i++) {
