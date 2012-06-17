@@ -15,7 +15,7 @@ public class LoadTester implements Runnable {
 	private int nThreads = 8;
 	private int nRequests = 8000;
 	private List<String> hosts;
-	private int delay = 45;
+	private int delay = 5;
 
 	public static Builder newbuilder() {
 		return new Builder();
@@ -32,7 +32,7 @@ public class LoadTester implements Runnable {
 		Client[] clients = new Client[(int) Math.floor(nRequests / nThreads)];
 
 		for (int i = 0; i < clients.length; i++) {
-			clients[i] = new Client(randomHost(hosts), randomId(3), randomId(100000));
+			clients[i] = new Client(randomHost(hosts), randomId(1), randomId(100000));
 		}
 		int i = 0;
 		while (true) {
@@ -43,7 +43,7 @@ public class LoadTester implements Runnable {
 			}
 
 			try {
-				Thread.sleep(10);
+				Thread.sleep(delay);
 			} catch (InterruptedException e) {
 			}
 		}
