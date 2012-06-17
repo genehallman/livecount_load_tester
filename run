@@ -1,0 +1,6 @@
+#!/bin/sh
+mkdir bin
+
+javac -classpath ./lib/commons-cli-1.2/commons-cli-1.2.jar:./lib/perf4j/perf4j-0.9.16.jar:./lib/JSON-java/bin/org.json.jar -d bin/ src/com/livefyre/livecount/*.java
+
+java -Dfile.encoding=MacRoman -classpath ./bin:./lib/commons-cli-1.2/commons-cli-1.2.jar:./lib/perf4j/perf4j-0.9.16.jar:./lib/JSON-java/bin/org.json.jar com.livefyre.livecount.Main
