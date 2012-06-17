@@ -4,6 +4,7 @@ import static com.livefyre.livecount.Util.p;
 import static com.livefyre.livecount.Util.randomHost;
 import static com.livefyre.livecount.Util.randomId;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -12,13 +13,20 @@ import java.util.concurrent.TimeUnit;
 public class LoadTester {
 	public static MetricAggregator metrics = new MetricAggregator();
 
-	private int nThreads;
-	private int nRequests;
+	private int nThreads = 8;
+	private int nRequests = 8000;
 	private List<String> hosts;
 	private int delay = 45;
 
 	public static Builder newbuilder() {
 		return new Builder();
+	}
+
+	private LoadTester() {
+		hosts = new ArrayList<String>();
+		hosts.add("http://genes-macbook-pro.local:8905");
+		hosts.add("http://genes-macbook-pro.local:8906");
+		hosts.add("http://genes-macbook-pro.local:8907");
 	}
 
 	public void start() throws InterruptedException {

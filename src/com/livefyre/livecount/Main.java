@@ -10,16 +10,17 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 
+import com.livefyre.livecount.LoadTester.Builder;
+
 public class Main {
 
 	public static void main(String[] args) throws Exception {
 		CommandLineParser parser = new PosixParser();
 		CommandLine cmd = parser.parse(buildOptions(), args);
 
-		int threads = 500;
-		int requests = 100000;
-
 		List<String> hosts = new ArrayList<String>();
+
+		Builder builder = LoadTester.newbuilder();
 
 		if (cmd.hasOption("h")) {
 			BufferedReader hostFile = new BufferedReader(new FileReader(cmd.getOptionValue("h")));
@@ -27,25 +28,18 @@ public class Main {
 				hosts.add(hostFile.readLine());
 			}
 			hostFile.close();
-		} else {
-			hosts.add("http://genes-macbook-pro.local:8905");
-			hosts.add("http://genes-macbook-pro.local:8906");
-			hosts.add("http://genes-macbook-pro.local:8907");
+			builder.setHosts(hosts);
 		}
 
 		if (cmd.hasOption("t")) {
-			if (cmd.hasOption("t")) {
-				threads = (Integer.parseInt(cmd.getOptionValue("t")));
-			}
+			builder.setThreads(Integer.parseInt(cmd.getOptionValue("t")));
 		}
 
 		if (cmd.hasOption("r")) {
-			if (cmd.hasOption("r")) {
-				requests = (Integer.parseInt(cmd.getOptionValue("r")));
-			}
+			builder.setRequests(Integer.parseInt(cmd.getOptionValue("r")));
 		}
 
-		LoadTester.newbuilder().setHosts(hosts).setRequests(requests).setThreads(threads).build().start();
+		builder.build().start();
 	}
 
 	private static Options buildOptions() {
