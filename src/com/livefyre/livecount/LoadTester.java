@@ -33,7 +33,7 @@ public class LoadTester implements Runnable {
 		Client[] clients = new Client[(int) Math.floor(nRequests / nThreads)];
 
 		for (int i = 0; i < clients.length; i++) {
-			clients[i] = new Client(randomHost(hosts), randomId(1), randomId(100000));
+			clients[i] = new Client(randomHost(hosts), randomId(1), randomId(10000000));
 		}
 		int i = 0;
 		while (true) {
