@@ -29,8 +29,9 @@ public class Client implements Runnable {
     private JSONObject makeRequest() throws Exception {
         HttpURLConnection connection = null;
         try {
-            String url = String.format("%s/livecountping/%d/%d/", this.routedHost == null ? this.host : this.routedHost, this.convId,
-                    this.userId);
+            String url = String
+                    .format("%s/livecountping/%d/%d/", this.routedHost == null ? this.host
+                            : this.routedHost, this.convId, this.userId);
             String params = "?";
             if (timeout) {
                 params += "timeout=1";
@@ -49,7 +50,8 @@ public class Client implements Runnable {
             connection.setReadTimeout(3000);
             connection.connect();
 
-            BufferedReader response = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            BufferedReader response = new BufferedReader(new InputStreamReader(
+                    connection.getInputStream()));
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = response.readLine()) != null) {
@@ -63,10 +65,10 @@ public class Client implements Runnable {
             }
 
             if (rawResp.endsWith(");")) {
-                System.out.print("0");
+                // System.out.print("0");
                 rawResp = rawResp.replaceFirst("\\);$", "");
             } else {
-                System.out.print("1");
+                // System.out.print("1");
             }
 
             JSONObject resp = new JSONObject(rawResp);
@@ -127,7 +129,8 @@ public class Client implements Runnable {
         } catch (Exception e) {
             if (metric != null) {
                 metric.exception = e;
-                metric.roundTripTime = metric.roundTripTime > 0 ? metric.roundTripTime : timer.getElapsedTime();
+                metric.roundTripTime = metric.roundTripTime > 0 ? metric.roundTripTime : timer
+                        .getElapsedTime();
                 timer.stop();
             }
         } finally {

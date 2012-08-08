@@ -6,6 +6,8 @@ import static com.livefyre.livecount.Util.randomId;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class LoadTester implements Runnable {
     public static MetricAggregator metrics = new MetricAggregator();
@@ -27,7 +29,8 @@ public class LoadTester implements Runnable {
     }
 
     public void run() {
-        p("Thread %s starting %d clients", Thread.currentThread().getName(), (int) Math.floor(nRequests / nThreads));
+        p("Thread %s starting %d clients", Thread.currentThread().getName(),
+                (int) Math.floor(nRequests / nThreads));
         Client[] clients = new Client[(int) Math.floor(nRequests / nThreads)];
 
         for (int i = 0; i < clients.length; i++) {
@@ -50,16 +53,17 @@ public class LoadTester implements Runnable {
     }
 
     public void start() throws InterruptedException {
-        p("Starting Load Tester { threads: %d, requests: %d }", nThreads, (int) Math.floor(nRequests / nThreads) * nThreads);
+        p("Starting Load Tester { threads: %d, requests: %d }", nThreads,
+                (int) Math.floor(nRequests / nThreads) * nThreads);
 
         for (int i = 0; i < nThreads; i++) {
             new Thread(this).start();
         }
-        /*
-         * Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new
-         * Runnable() { public void run() { p(metrics); } }, 0, 10,
-         * TimeUnit.SECONDS);
-         */
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
+            public void run() {
+                p(metrics);
+            }
+        }, 0, 10, TimeUnit.SECONDS);
     }
 
     static class Builder {
